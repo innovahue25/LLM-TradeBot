@@ -5744,6 +5744,9 @@ class MultiAgentTradingBot:
                 # Check every 1 second during the wait interval
                 elapsed_seconds = 0
                 while True:
+                    global_state.cycle_counter += 1
+                    cycle_num = global_state.cycle_counter
+
                     # 每秒检查当前间隔设置 (支持动态调整)
                     current_interval = global_state.cycle_interval
                     wait_seconds = current_interval * 60
@@ -5772,7 +5775,10 @@ class MultiAgentTradingBot:
                              print(f"⏳ Next cycle in {remaining}m...")
                              global_state.add_log(f"[📊 SYSTEM] Waiting next cycle... ({remaining}m)")
 
-                    time.sleep(1)
+                    # 🛑 ADD THIS - Throttle cycle interval
+                    interval_seconds = global_state.cycle_interval * 60  # Convert minutes to seconds
+                    print(f"⏸️ Sleeping for {global_state.cycle_interval} minutes before next cycle...")
+                    time.sleep(interval_seconds)  # Sleep 3 minutes default (900 seconds)
                     elapsed_seconds += 1
                 
         except KeyboardInterrupt:
